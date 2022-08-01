@@ -3,6 +3,8 @@ package apiserver
 import (
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
+	"io"
+	"net/http"
 )
 
 type APIServer struct {
@@ -24,9 +26,11 @@ func (s *APIServer) Start() error {
 		return err
 	}
 
+	s.configureRouter()
+
 	s.logger.Info("starting api server")
 
-	return nil
+	return http.ListenAndServe(s.config.BindAddr, s.router)
 }
 
 func (s *APIServer) configureLogger() error {
@@ -41,5 +45,11 @@ func (s *APIServer) configureLogger() error {
 }
 
 func (s *APIServer) configureRouter() {
+	s.router.HandleFunc("/hello", s.handleHello())
+}
 
+func (s *APIServer) handleHello() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		io.WriteString(w, "Go Go vcParser!")
+	}
 }
