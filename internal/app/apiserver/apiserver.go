@@ -1,16 +1,21 @@
 package apiserver
 
-import "github.com/sirupsen/logrus"
+import (
+	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
+)
 
 type APIServer struct {
 	config *Config
 	logger *logrus.Logger
+	router *mux.Router
 }
 
 func New(config *Config) *APIServer {
 	return &APIServer{
 		config: config,
 		logger: logrus.New(),
+		router: mux.NewRouter(),
 	}
 }
 
@@ -33,4 +38,8 @@ func (s *APIServer) configureLogger() error {
 	s.logger.SetLevel(level)
 
 	return nil
+}
+
+func (s *APIServer) configureRouter() {
+
 }
